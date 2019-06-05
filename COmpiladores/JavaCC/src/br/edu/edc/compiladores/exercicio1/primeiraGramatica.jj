@@ -1,0 +1,203 @@
+options
+{
+  static = true;
+}
+
+PARSER_BEGIN(Trabalho2B)
+package br.udc.edu.cmp.br;
+
+public class Trabalho2B
+{
+  public static void main(String args []) throws ParseException
+  {
+    try
+    {
+      Trabalho2B parser = new Trabalho2B(Arquivo.getIS("C:/Users/LAB-CC/Desktop/Codigo.txt"));
+      Trabalho2B.start();
+      System.out.println("Deu certo!");
+    }
+    catch (Exception e)
+    {
+      System.out.println("Exeptions");
+      System.out.println(e.getMessage());
+      return;
+    }
+    catch (Error e)
+    {
+      System.out.println("Erro!");
+      System.out.println(e.getMessage());
+      return;
+    }
+  }
+}
+
+PARSER_END(Trabalho2B)
+
+SKIP :
+{
+  "\r"
+| 	"\t"
+| 	"\n"
+| 	" "
+}
+
+//STATIC TOKENS
+TOKEN :
+{
+  < NUMERO : < digito > (< digito >)* >
+| 	< BOOLEANO :
+    "true"
+  | "false" >
+| 	< #digito : [ "0"-"9" ] >
+| 	< #letra : [ "a"-"z", "A"-"Z" ] >
+}
+
+//PALAVRAS RESERVADAS
+TOKEN [ IGNORE_CASE ] :
+{
+  < IF : "IF" >
+| 	< THEN : "THEN" >
+| 	< ELSE : "ELSE" >
+| 	< FOR : "FOR" >
+| 	< TO : "TO" >
+| 	< INTEGER : "INT" >
+| 	< FLOAT : "FLOAT" >
+| 	< CHAR : "CHAR" >
+}
+
+//IDENTIFIER TOKEN
+TOKEN :
+{
+  < IDENTIFICADOR :
+    < letra >
+    (
+      < letra >
+    | < digito >
+    )* >
+}
+
+TOKEN :
+{
+  < operador_matematico :
+    "+"
+  | "-"
+  | "*"
+  | "/" >
+| < operador_logico :
+    ">"
+  | "<"
+  | "!="
+  | "<="
+  | ">="
+  | "==" >
+}
+
+void start() :
+{}
+{
+  < IDENTIFICADOR > bloco_comandos()
+}
+
+void bloco_comandos() :
+{}
+{
+  "{"
+  (
+    comando()
+  )+
+  "}"
+}
+
+void comando() :
+{}
+{
+  comando_atribuicao()
+| comando_if()
+| comando_for()
+| comando_declaracao()
+}
+
+void comando_declaracao() :
+{}
+{
+  (
+    < INTEGER >
+  | < FLOAT >
+  | < CHAR >
+  )
+  < IDENTIFICADOR > ("," < IDENTIFICADOR >)* ";"
+}
+
+void comando_atribuicao() :
+{}
+{
+  < IDENTIFICADOR > "="
+  (
+    LOOKAHEAD(3)
+    expressao_matematica()
+  | expressao_logica()
+  | < IDENTIFICADOR >
+  | < BOOLEANO >
+  | < NUMERO >
+  )
+  ";"
+}
+
+void comando_if() :
+{}
+{
+  < IF > expressao_logica() < THEN >
+  (
+    comando()
+  | bloco_comandos()
+  )
+  (
+    < ELSE >
+    (
+      comando()
+    | bloco_comandos()
+    )
+  )
+}
+
+void comando_for() :
+{}
+{
+  < FOR > < IDENTIFICADOR > "=" expressao_matematica() < TO >
+  (
+    comando()
+  | bloco_comandos()
+  )
+}
+
+void expressao_matematica() :
+{}
+{
+  (
+    < IDENTIFICADOR >
+  | < NUMERO >
+  )
+  (
+    < operador_matematico >
+    (
+      < IDENTIFICADOR >
+    | < NUMERO >
+    )
+  )+
+}
+
+void expressao_logica() :
+{}
+{
+  (
+    < IDENTIFICADOR >
+  | < BOOLEANO >
+  )
+  (
+    < operador_logico >
+    (
+      < IDENTIFICADOR >
+    | < BOOLEANO >
+    )
+  )+
+}

@@ -1,0 +1,189 @@
+options
+{
+  static = true;
+}
+
+PARSER_BEGIN(Trabalho2B)
+package br.udc.edu.cmp.br;
+
+public class Trabalho2B
+{
+  public static void main(String args []) throws ParseException
+  {
+    Trabalho2B parser = new Trabalho2B(System.in);
+    while (true)
+    {
+      System.out.println("Reading from standard input...:");
+      try
+      {
+        Trabalho2B.start();
+      }
+      catch (Exception e)
+      {
+        System.out.println("Oops.");
+        System.out.println(e.getMessage());
+        return;
+      }
+      catch (Error e)
+      {
+        System.out.println("Oops.");
+        System.out.println(e.getMessage());
+        return;
+      }
+    }
+  }
+}
+
+PARSER_END(Trabalho2B)
+
+SKIP :
+{
+  "\r"
+| 	"\t"
+| 	"\n"
+}
+
+//STATIC TOKENS
+TOKEN :
+{
+  < numero : < digito > (< digito >)* >
+| 	< booleano :
+    "true"
+  | "false" >
+| 	< digito : [ "0"-"9" ] >
+| 	< letra : [ "a"-"z", "A"-"Z" ] >
+}
+
+//PALAVRAS RESERVADAS
+TOKEN :
+{
+  < IF : "IF" >
+| 	< THEN : "THEN" >
+| 	< ELSE : "ELSE" >
+| 	< FOR : "FOR" >
+| 	< TO : "TO" >
+}
+
+//IDENTIFIER TOKEN
+TOKEN :
+{
+  < identificador :
+    < letra >
+    (
+      < letra >
+    | < digito >
+    )* >
+}
+
+TOKEN :
+{
+  < declaracoes : < tipo > < lista_identificadores > ";" >
+| 	< #lista_identificadores : < identificador > ("," < identificador >)* >
+}
+
+TOKEN [ IGNORE_CASE ] :
+{
+  < tipo :
+    "int"
+  | "float"
+  | "varchar" >
+}
+
+TOKEN :
+{
+  < variavel : < identificador > >
+}
+
+TOKEN :
+{
+  < expressao_matematica : < operando_matematico > 
+    (
+    < operador_matematico > 
+    < operando_matematico >
+    )+ >
+| < #operando_matematico :
+    < variavel >
+  | < numero > >
+| < #operador_matematico :
+    "+"
+  | "-"
+  | "*"
+  | "/" >
+}
+
+TOKEN [ IGNORE_CASE ] :
+{
+  < expressao_logica : < operando_logico > (< operador_logico > < operando_logico >)+ >
+| < #operando_logico :
+    < variavel >
+  | < booleano > >
+| < #operador_logico :
+    ">"
+  | "<"
+  | "!="
+  | "<="
+  | ">=" >
+}
+
+void start() :
+{}
+{
+  < identificador > bloco_comandos()
+}
+
+void bloco_comandos() :
+{}
+{
+  "{"
+  (
+    comando()
+  )+
+  "}"
+}
+
+void comando() :
+{}
+{
+  comando_atribuicao()
+| comando_if()
+| comando_for()
+| < declaracoes >
+}
+
+void comando_atribuicao() :
+{}
+{
+  < variavel > "="
+  (
+    < expressao_matematica >
+  | < expressao_logica >
+  )
+  ";"
+}
+
+void comando_if() :
+{}
+{
+  < IF > < expressao_logica > < THEN >
+  (
+    comando()
+  | bloco_comandos()
+  )
+  (
+    < ELSE >
+    (
+      comando()
+    | bloco_comandos()
+    )
+  )?
+}
+
+void comando_for() :
+{}
+{
+  < FOR > < variavel > "=" < expressao_matematica > < TO >
+  (
+    comando()
+  | bloco_comandos()
+  )
+}
