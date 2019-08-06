@@ -1,5 +1,4 @@
 
-
 import java.net.*;
 import java.io.*;
 
@@ -53,12 +52,28 @@ public class Server {
 						break;
 					}
 					case Client.COPIA_ARQUIVO: {
-						output.writeUTF("Copiar");
+						final FileReader leitor = new FileReader(Client.NOME_ARQUIVO);
+						final BufferedReader leitorBuffado = new BufferedReader(leitor);
+						final FileWriter escritor = new FileWriter(Client.NOME_ARQUIVO + "_bkp");
+
+						while (leitorBuffado.ready()) {
+							escritor.append(leitorBuffado.readLine());
+							escritor.append("\n");
+						}
+
+						escritor.close();
+						leitorBuffado.close();
+						leitor.close();
+
+						output.writeUTF("Arquivo copiado com sucesso!");
 						output.flush();
 						break;
 					}
 					case Client.CONFIRMA_COPIA: {
-						output.writeUTF("Confirmar");
+						if (new File(Client.NOME_ARQUIVO + "_bkp").exists())
+							output.writeUTF("Backup Criado");
+						else
+							output.writeUTF("Arquivo backup não existe");
 						output.flush();
 						break;
 					}

@@ -24,7 +24,7 @@ public class Client {
 			final ObjectOutputStream output = new ObjectOutputStream(sock.getOutputStream());
 			final ObjectInputStream input = new ObjectInputStream(sock.getInputStream());
 
-			final String mensagem = Client.LER_ARQUIVO;
+			final String mensagem = Client.FINALIZA_SERVIDOR;
 
 			output.writeUTF(mensagem);
 			output.flush();
