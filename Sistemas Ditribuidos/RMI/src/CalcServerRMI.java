@@ -2,9 +2,9 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteObject;
 
-public class CalcServer extends RemoteObject implements Calculadora {
+public class CalcServerRMI extends RemoteObject implements Calculadora {
 
-	protected CalcServer() throws RemoteException {
+	protected CalcServerRMI() throws RemoteException {
 		super();
 	}
 
@@ -33,7 +33,7 @@ public class CalcServer extends RemoteObject implements Calculadora {
 	public static void main(String[] args) {
 
 		try {
-			Naming.rebind("//localhost:1010/CalcServer", new CalcServer());
+			Naming.rebind("//localhost:1010/CalcServer", new CalcServerRMI());
 			System.err.println("Servidor rodando...");
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -5,13 +5,13 @@ import java.rmi.RemoteException;
 
 import javax.swing.JOptionPane;
 
-public class CalcCliente {
+public class CalcClienteRMI {
 
 	private static Calculadora servico;
 
 	public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException {
 
-		CalcCliente.servico = (Calculadora) Naming.lookup("//localhost:1010/CalcServer");
+		CalcClienteRMI.servico = (Calculadora) Naming.lookup("//localhost:1010/CalcServer");
 
 		Integer resposta = servico.soma(2, 3);
 		JOptionPane.showMessageDialog(null, "Resultado: " + resposta);
